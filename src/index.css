@@ -157,7 +157,7 @@ body,
   position: relative;
   z-index: 1;
   /* Leave a navy frame so petals/stars are not covered by the room. */
-  width: min(90vw, calc(70vh * 1024 / 576));
+  width: min(94vw, calc(82vh * 1024 / 576));
   aspect-ratio: 1024 / 576;
   overflow: hidden;
 }
