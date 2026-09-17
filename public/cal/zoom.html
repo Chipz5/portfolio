@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Eye align</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #111; overflow: hidden; color: #fff; font: 13px ui-monospace, monospace; }
+    #stage { position: absolute; width: 1024px; height: 576px; transform-origin: 0 0; }
+    #stage .base { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #ov { position: absolute; height: auto; pointer-events: none; }
+    #hud {
+      position: fixed; left: 8px; bottom: 8px; z-index: 5;
+      background: #000c; padding: 10px; border-radius: 8px; display: grid; gap: 6px; min-width: 240px;
+    }
+    label { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    input[type=range] { width: 140px; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <img class="base" src="/workshop.jpg" alt="">
+    <img id="ov" src="/eyes-closed.png" alt="">
+  </div>
+  <div id="hud">
+    <div id="vals"></div>
+    <label>L <input id="inLeft" type="range" min="78" max="90" step="0.05" value="84.5"> <span id="lv"></span></label>
+    <label>T <input id="inTop" type="range" min="22" max="38" step="0.05" value="28.5"> <span id="tv"></span></label>
+    <label>W <input id="inWidth" type="range" min="2" max="9" step="0.05" value="4.8"> <span id="wv"></span></label>
+    <label>R <input id="inRot" type="range" min="-15" max="15" step="0.5" value="0"> <span id="rv"></span></label>
+    <select id="frame">
+      <option value="/eyes-closed.png">closed</option>
+      <option value="/eyes-half.png">half</option>
+      <option value="/eyes-open.png">open</option>
+      <option value="">none</option>
+    </select>
+    <div style="opacity:.7;font-size:11px">open should nearly vanish when aligned</div>
+  </div>
+  <script>
+    const stage = document.getElementById('stage')
+    const ov = document.getElementById('ov')
+    const inLeft = document.getElementById('inLeft')
+    const inTop = document.getElementById('inTop')
+    const inWidth = document.getElementById('inWidth')
+    const inRot = document.getElementById('inRot')
+    const frame = document.getElementById('frame')
+    const vals = document.getElementById('vals')
+
+    function layout() {
+      const crop = { x: 815, y: 120, w: 170, h: 150 }
+      const scale = Math.min(innerWidth / crop.w, innerHeight / crop.h)
+      stage.style.transform = `translate(${-crop.x * scale}px, ${-crop.y * scale}px) scale(${scale})`
+    }
+
+    function sync() {
+      const l = +inLeft.value, t = +inTop.value, w = +inWidth.value, r = +inRot.value
+      lv.textContent = l.toFixed(2)
+      tv.textContent = t.toFixed(2)
+      wv.textContent = w.toFixed(2)
+      rv.textContent = r.toFixed(1)
+      vals.textContent = `L${l.toFixed(2)} T${t.toFixed(2)} W${w.toFixed(2)} R${r.toFixed(1)}`
+      if (!frame.value) {
+        ov.style.display = 'none'
+        return
+      }
+      ov.style.display = 'block'
+      ov.src = frame.value + '?v=2'
+      ov.style.left = l + '%'
+      ov.style.top = t + '%'
+      ov.style.width = w + '%'
+      ov.style.transform = `rotate(${r}deg)`
+      ov.style.transformOrigin = 'center center'
+    }
+
+    window.setPose = (l, t, w, r, f) => {
+      if (l != null) inLeft.value = l
+      if (t != null) inTop.value = t
+      if (w != null) inWidth.value = w
+      if (r != null) inRot.value = r
+      if (f != null) frame.value = f
+      sync()
+      return { l: +inLeft.value, t: +inTop.value, w: +inWidth.value, r: +inRot.value, f: frame.value }
+    }
+
+    ;[inLeft, inTop, inWidth, inRot].forEach((el) => (el.oninput = sync))
+    frame.onchange = sync
+    addEventListener('resize', layout)
+    layout()
+    sync()
+  </script>
+</body>
+</html>

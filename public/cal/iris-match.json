@@ -1,0 +1,16 @@
+{
+  "best": {
+    "score": 4995.840299150733,
+    "leftPct": 85,
+    "topPct": 30.5,
+    "widthPct": 2.8,
+    "n": 6058
+  },
+  "fine": {
+    "score": 4839.661978333299,
+    "leftPct": 84.95,
+    "topPct": 30.65,
+    "widthPct": 2.6
+  },
+  "eyePixN": 6058
+}
